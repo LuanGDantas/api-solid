@@ -1,12 +1,12 @@
 import 'dotenv/config';
 import { z } from 'zod';
-import logger from '../util/logger';
+import logger from '../utils/logger';
 
 const envSchema = z.object({
   NODE_ENV: z
     .enum(['developement', 'test', 'production'])
     .default('developement'),
-  PORT: z.coerce.number().default(3003),
+  PORT: z.coerce.number().default(3003)
 });
 
 const _env = envSchema.safeParse(process.env);

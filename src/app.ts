@@ -1,7 +1,7 @@
 import fastify from 'fastify';
 import { appRoutes } from './http/routes';
 import { ZodError } from 'zod';
-import logger from './util/logger';
+import logger from './utils/logger';
 
 export const app = fastify();
 
