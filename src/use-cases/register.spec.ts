@@ -1,15 +1,20 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { RegisterUseCase } from './register';
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository';
 import { compare } from 'bcryptjs';
 import { UserAlreadyExistsError } from './errors/user-already-exists-error';
 
-describe('Register Use Case', () => {
-  it('should be able to register', async () => {
-    const userRepository = new InMemoryUsersRepository();
-    const registerUseCase = new RegisterUseCase(userRepository);
+let userRepository: InMemoryUsersRepository;
+let sut: RegisterUseCase;
 
-    const { user } = await registerUseCase.execute({
+describe('Register Use Case', () => {
+  beforeEach(() => {
+    userRepository = new InMemoryUsersRepository();
+    sut = new RegisterUseCase(userRepository);
+  });
+
+  it('should be able to register', async () => {
+    const { user } = await sut.execute({
       name: 'Snicker Sousa',
       email: 'snicker@example.com',
       password: '1234567'
@@ -19,10 +24,7 @@ describe('Register Use Case', () => {
   });
 
   it('should hash user password upon registration', async () => {
-    const userRepository = new InMemoryUsersRepository();
-    const registerUseCase = new RegisterUseCase(userRepository);
-
-    const { user } = await registerUseCase.execute({
+    const { user } = await sut.execute({
       name: 'Snicker Sousa',
       email: 'snicker@example.com',
       password: '1234567'
@@ -37,19 +39,16 @@ describe('Register Use Case', () => {
   });
 
   it('should not be able to register with same email twice', async () => {
-    const userRepository = new InMemoryUsersRepository();
-    const registerUseCase = new RegisterUseCase(userRepository);
-
     const email = 'snicker@example.com';
 
-    await registerUseCase.execute({
+    await sut.execute({
       name: 'Snicker Sousa',
       email,
       password: '1234567'
     });
 
     await expect(() =>
-      registerUseCase.execute({
+      sut.execute({
         name: 'Snicker Nascimento',
         email,
         password: '1234567'
